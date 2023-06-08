@@ -11,14 +11,17 @@ pipeline {
                 sh 'npm install'
             }
         }
-        stage('SonarQube analysis') {
+        stage ('Static Analysis') {
             steps {
-                def scannerHome = tool 'SonarScanner 4.0';
-                withSonarQubeEnv('My SonarQube Server') { // If you have configured more than one global server connection, you can specify its name
-                    sh "${scannerHome}/bin/sonar-scanner"
+                sh ' ./node_modules/eslint/bin/eslint.js -f checkstyle src > eslint.xml'
+            }
+            post {
+                always {
+                    recordIssues enabledForFailure: true, aggregatingResults: true, tool: checkStyle(pattern: 'eslint.xml')
                 }
             }
         }
+       
         stage('Test') {
             steps {
                 sh './jenkins/scripts/test.sh'
