@@ -14,6 +14,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh './jenkins/scripts/test.sh'
+                sh 'sonar-scanner'
             }
         }
         stage('Deliver') { 
